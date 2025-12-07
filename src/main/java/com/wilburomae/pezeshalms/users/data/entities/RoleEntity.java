@@ -26,4 +26,9 @@ public class RoleEntity extends IdAuditableEntity {
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<PermissionEntity> permissions = new LinkedHashSet<>();
+
+    public void addPermission(PermissionEntity permission) {
+        permissions.add(permission);
+        permission.getRoles().add(this);
+    }
 }

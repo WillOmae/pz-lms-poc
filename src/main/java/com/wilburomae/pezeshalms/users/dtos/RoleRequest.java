@@ -6,5 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record RoleRequest(@NotBlank String name, @NotEmpty List<@NotNull Long> permissionIds) {
+public record RoleRequest(@NotBlank String name,
+                          @NotBlank String description,
+                          @NotEmpty List<@NotNull Long> permissionIds) {
 }
