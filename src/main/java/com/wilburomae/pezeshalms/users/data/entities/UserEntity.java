@@ -1,5 +1,6 @@
 package com.wilburomae.pezeshalms.users.data.entities;
 
+import com.wilburomae.pezeshalms.accounts.data.entities.PartnerAccountEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,4 +42,7 @@ public class UserEntity extends IdAuditableEntity {
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<PartnerAccountEntity> partnerAccounts = new LinkedHashSet<>();
 }
