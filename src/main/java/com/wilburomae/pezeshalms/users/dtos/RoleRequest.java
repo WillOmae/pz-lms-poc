@@ -1,6 +1,10 @@
 package com.wilburomae.pezeshalms.users.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
-public record RoleRequest(String name, List<Long> permissionIds) {
+public record RoleRequest(@NotBlank String name, @NotEmpty List<@NotNull Long> permissionIds) {
 }

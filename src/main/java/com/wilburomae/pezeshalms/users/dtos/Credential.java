@@ -1,5 +1,4 @@
 package com.wilburomae.pezeshalms.users.dtos;
 
-public record Credential(String hashedPassword,
-                         String status) {
+public record Credential(String hashedPassword, String status) {
 }

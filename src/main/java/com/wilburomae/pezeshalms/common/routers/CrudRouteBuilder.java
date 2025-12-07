@@ -16,10 +16,12 @@ public class CrudRouteBuilder {
 
     private final FetchService fetchService;
     private final DeletionService deletionService;
+    private final RequestValidatorService validator;
 
-    public CrudRouteBuilder(FetchService fetchService, DeletionService deletionService) {
+    public CrudRouteBuilder(FetchService fetchService, DeletionService deletionService, RequestValidatorService validator) {
         this.fetchService = fetchService;
         this.deletionService = deletionService;
+        this.validator = validator;
     }
 
     public <T, R, U> RouterFunction<ServerResponse> build(String permissionSuffix,
@@ -31,10 +33,10 @@ public class CrudRouteBuilder {
                                                           UpsertService<T> upsertService) {
 
         return RouterFunctions.route()
-                .POST(commonUrl, new GenericUpsertRouter<>("WRITE_" + permissionSuffix, upsertService, requestClass))
+                .POST(commonUrl, new GenericUpsertRouter<>("WRITE_" + permissionSuffix, upsertService, requestClass, validator))
                 .GET(commonUrl, new GenericFetchRouter<>("READ_" + permissionSuffix, nameSingular, mapper, repository, fetchService))
                 .GET(commonUrl + "/{id}", new GenericFetchByIdRouter<>("READ_" + permissionSuffix, nameSingular, mapper, repository, fetchService))
-                .PUT(commonUrl + "/{id}", new GenericUpsertRouter<>("WRITE_" + permissionSuffix, upsertService, requestClass))
+                .PUT(commonUrl + "/{id}", new GenericUpsertRouter<>("WRITE_" + permissionSuffix, upsertService, requestClass, validator))
                 .DELETE(commonUrl + "/{id}", new GenericDeleteRouter<>("DELETE_" + permissionSuffix, nameSingular, repository, deletionService))
                 .build();
     }
