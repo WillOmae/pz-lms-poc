@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,5 +22,5 @@ public class PermissionEntity extends IdAuditableEntity {
 
     @ManyToMany
     @JoinTable(name = "role_permissions", schema = "lms", joinColumns = @JoinColumn(name = "permission_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles = new LinkedHashSet<>();
 }

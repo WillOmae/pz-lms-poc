@@ -8,7 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,5 +24,5 @@ public class IdentificationTypeEntity extends IdAuditableEntity {
     private String description;
 
     @OneToMany(mappedBy = "idType")
-    private List<IdentificationEntity> ids;
+    private Set<IdentificationEntity> ids = new LinkedHashSet<>();
 }

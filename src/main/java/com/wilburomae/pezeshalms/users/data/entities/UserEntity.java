@@ -7,7 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,20 +25,20 @@ public class UserEntity extends IdAuditableEntity {
     private EntityType type;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<ContactEntity> contacts;
+    private Set<ContactEntity> contacts = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "user")
     private CredentialEntity credential;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<IdentificationEntity> ids;
+    private Set<IdentificationEntity> ids = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private List<LoginAttemptEntity> loginAttempts;
+    private Set<LoginAttemptEntity> loginAttempts = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private List<RefreshTokenEntity> refreshTokens;
+    private Set<RefreshTokenEntity> refreshTokens = new LinkedHashSet<>();
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles = new LinkedHashSet<>();
 }
