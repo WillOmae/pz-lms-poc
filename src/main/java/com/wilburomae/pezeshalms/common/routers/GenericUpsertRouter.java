@@ -1,14 +1,18 @@
 package com.wilburomae.pezeshalms.common.routers;
 
+import com.wilburomae.pezeshalms.common.dtos.Response;
 import com.wilburomae.pezeshalms.common.services.UpsertService;
 import jakarta.servlet.ServletException;
 import org.apache.coyote.BadRequestException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 
 import java.io.IOException;
+
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
 
@@ -45,6 +49,12 @@ public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
 
         validator.validate(request);
 
-        return upsertService.upsert(id, request).toServerResponse();
+        Response<Long> response;
+        try {
+            response = upsertService.upsert(id, request);
+        } catch (DataIntegrityViolationException e) {
+            response = new Response<>(CONFLICT, "Duplicate entry", null);
+        }
+        return response.toServerResponse();
     }
 }
