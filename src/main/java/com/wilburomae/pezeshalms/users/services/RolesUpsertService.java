@@ -11,9 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -30,15 +28,11 @@ public class RolesUpsertService implements UpsertService<RoleRequest> {
     @Transactional
     @Override
     public Response<Long> upsert(Long id, RoleRequest request) {
-        RoleEntity entity = new RoleEntity();
-        if (id != null) {
-            Optional<RoleEntity> found = roleRepository.findById(id);
-            if (found.isEmpty()) {
-                return new Response<>(NOT_FOUND, "Role not found", null);
-            } else {
-                entity = found.get();
-            }
+        Response<RoleEntity> initResponse = initEntity(id, roleRepository, RoleEntity::new);
+        if (initResponse.responseCode().isError()) {
+            return new Response<>(NOT_FOUND, "Role not found", null);
         }
+        RoleEntity entity = initResponse.data();
 
         List<PermissionEntity> foundPermissions = permissionRepository.findAllById(request.permissionIds());
         if (foundPermissions.size() != request.permissionIds().size()) {
@@ -52,6 +46,6 @@ public class RolesUpsertService implements UpsertService<RoleRequest> {
 
         entity = roleRepository.save(entity);
 
-        return new Response<>(CREATED, "Role saved successfully", entity.getId());
+        return successResponse(id, "Role", entity);
     }
 }
