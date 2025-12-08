@@ -1,6 +1,5 @@
-package com.wilburomae.pezeshalms.users.data.repositories;
+package com.wilburomae.pezeshalms.security;
 
-import com.wilburomae.pezeshalms.users.data.entities.CredentialStatusEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

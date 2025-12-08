@@ -1,6 +1,7 @@
-package com.wilburomae.pezeshalms.users.data.entities;
+package com.wilburomae.pezeshalms.security;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

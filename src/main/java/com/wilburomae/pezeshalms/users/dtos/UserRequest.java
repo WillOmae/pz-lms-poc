@@ -10,6 +10,5 @@ public record UserRequest(@NotBlank String name,
                           long typeId,
                           @NotEmpty List<@NotNull Contact> contacts,
                           @NotEmpty List<@NotNull Identification> identifications,
-                          @NotEmpty List<@NotNull Long> roleIds,
-                          String password) {
+                          @NotEmpty List<@NotNull Long> roleIds) {
 }

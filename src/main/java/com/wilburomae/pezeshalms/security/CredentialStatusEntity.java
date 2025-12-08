@@ -1,4 +1,4 @@
-package com.wilburomae.pezeshalms.users.data.entities;
+package com.wilburomae.pezeshalms.security;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import jakarta.persistence.Column;

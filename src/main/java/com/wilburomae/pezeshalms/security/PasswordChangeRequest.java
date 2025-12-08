@@ -1,4 +1,4 @@
-package com.wilburomae.pezeshalms.users.dtos;
+package com.wilburomae.pezeshalms.security;
 
 import jakarta.validation.constraints.NotBlank;
 

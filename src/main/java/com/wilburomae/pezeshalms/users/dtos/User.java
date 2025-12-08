@@ -1,6 +1,5 @@
 package com.wilburomae.pezeshalms.users.dtos;
 
-import com.wilburomae.pezeshalms.users.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.users.data.entities.PermissionEntity;
 import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 
@@ -11,8 +10,7 @@ public record User(long id,
                    String type,
                    List<Contact> contacts,
                    List<Identification> identifications,
-                   List<Role> roles,
-                   Credential credential) {
+                   List<Role> roles) {
 
     public static User from(UserEntity entity) {
         List<Contact> contacts = entity.getContacts()
@@ -30,9 +28,6 @@ public record User(long id,
                 .map(e -> new Role(e.getName(), e.getPermissions().stream().map(PermissionEntity::getName).toList()))
                 .toList();
 
-        CredentialEntity credentialEntity = entity.getCredential();
-        Credential credential = new Credential(credentialEntity.getHashedPassword(), credentialEntity.getStatus().getName());
-
-        return new User(entity.getId(), entity.getName(), entity.getType().toString(), contacts, identifications, roles, credential);
+        return new User(entity.getId(), entity.getName(), entity.getType().toString(), contacts, identifications, roles);
     }
 }

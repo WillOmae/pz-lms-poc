@@ -1,23 +1,20 @@
 package com.wilburomae.pezeshalms.security;
 
-import com.wilburomae.pezeshalms.users.data.repositories.UserRepository;
-import com.wilburomae.pezeshalms.users.dtos.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class DBUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final CredentialRepository repository;
 
-    public DBUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public DBUserDetailsService(CredentialRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.fetchByContact(username)
-                .map(User::from)
+        return repository.fetchByContact(username)
                 .map(DBUserDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
