@@ -29,13 +29,13 @@ public class UserEntity extends IdAuditableEntity {
     @Column(name = "entity_type")
     private EntityType type;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<ContactEntity> contacts = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "user")
     private CredentialEntity credential;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<IdentificationEntity> ids = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")

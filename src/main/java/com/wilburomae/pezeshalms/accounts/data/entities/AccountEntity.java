@@ -25,7 +25,7 @@ public class AccountEntity extends IdAuditableEntity {
     @JoinColumn(name = "account_status_id")
     private AccountStatusEntity accountStatus;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<AccountBalanceEntity> accountBalances = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "account")
