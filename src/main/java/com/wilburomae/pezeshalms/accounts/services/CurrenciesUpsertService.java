@@ -5,6 +5,7 @@ import com.wilburomae.pezeshalms.accounts.data.repositories.CurrencyRepository;
 import com.wilburomae.pezeshalms.accounts.dtos.CurrencyRequest;
 import com.wilburomae.pezeshalms.common.dtos.Response;
 import com.wilburomae.pezeshalms.common.services.UpsertService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -18,6 +19,7 @@ public class CurrenciesUpsertService implements UpsertService<CurrencyRequest> {
         this.currencyRepository = currencyRepository;
     }
 
+    @Transactional
     @Override
     public Response<Long> upsert(Long id, CurrencyRequest request) {
         Response<CurrencyEntity> initResponse = initEntity(id, currencyRepository, CurrencyEntity::new);

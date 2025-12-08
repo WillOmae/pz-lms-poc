@@ -5,6 +5,7 @@ import com.wilburomae.pezeshalms.accounts.data.repositories.AccountStatusReposit
 import com.wilburomae.pezeshalms.accounts.dtos.AccountStatusRequest;
 import com.wilburomae.pezeshalms.common.dtos.Response;
 import com.wilburomae.pezeshalms.common.services.UpsertService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -18,6 +19,7 @@ public class AccountStatusesUpsertService implements UpsertService<AccountStatus
         this.accountStatusRepository = accountStatusRepository;
     }
 
+    @Transactional
     @Override
     public Response<Long> upsert(Long id, AccountStatusRequest request) {
         Response<AccountStatusEntity> initResponse = initEntity(id, accountStatusRepository, AccountStatusEntity::new);
