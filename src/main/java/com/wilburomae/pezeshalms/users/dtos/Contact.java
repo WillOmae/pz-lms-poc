@@ -1,4 +1,8 @@
 package com.wilburomae.pezeshalms.users.dtos;
 
-public record Contact(String contact, String contactType, boolean isPrimary) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+public record Contact(@NotBlank String contact, @NotBlank @Pattern(regexp = "^PHONE|EMAIL$") String contactType,
+                      boolean isPrimary) {
 }

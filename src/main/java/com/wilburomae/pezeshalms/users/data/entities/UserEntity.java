@@ -3,6 +3,8 @@ package com.wilburomae.pezeshalms.users.data.entities;
 import com.wilburomae.pezeshalms.accounts.data.entities.PartnerAccountEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import com.wilburomae.pezeshalms.security.CredentialEntity;
+import com.wilburomae.pezeshalms.users.dtos.Contact;
+import com.wilburomae.pezeshalms.users.dtos.Identification;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -46,4 +49,33 @@ public class UserEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<PartnerAccountEntity> partnerAccounts = new LinkedHashSet<>();
+
+    public void addRole(RoleEntity role) {
+        roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void addContact(Contact contact) {
+        ContactEntity entity = new ContactEntity();
+        entity.setContact(contact.contact());
+        entity.setUser(this);
+        entity.setPrimary(contact.isPrimary());
+        entity.setContactType(contact.contactType());
+
+        contacts.add(entity);
+    }
+
+    public void addIdentification(Identification identification, List<IdentificationTypeEntity> idTypes) {
+        IdentificationTypeEntity idType = idTypes.stream()
+                .filter(e -> e.getId() == identification.idTypeId())
+                .findFirst()
+                .orElseThrow();
+
+        IdentificationEntity entity = new IdentificationEntity();
+        entity.setIdNumber(identification.idNumber());
+        entity.setIdType(idType);
+        entity.setUser(this);
+
+        ids.add(entity);
+    }
 }
