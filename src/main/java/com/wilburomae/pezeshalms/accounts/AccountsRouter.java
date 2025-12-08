@@ -18,11 +18,6 @@ public class AccountsRouter {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> accountBalancesRoutes(CrudRouteBuilder builder, AccountBalanceRepository repository, AccountBalancesUpsertService upsertService) {
-        return builder.build("ACCOUNT_BALANCES", "Account balance", "/accounts/accountbalances", AccountBalanceRequest.class, AccountBalance::from, repository, upsertService);
-    }
-
-    @Bean
     public RouterFunction<ServerResponse> accountStatusesRoutes(CrudRouteBuilder builder, AccountStatusRepository repository, AccountStatusesUpsertService upsertService) {
         return builder.build("ACCOUNT_STATUSES", "Account status", "/accounts/accountstatuses", AccountStatusRequest.class, AccountStatus::from, repository, upsertService);
     }

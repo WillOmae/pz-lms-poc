@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -30,4 +31,22 @@ public class AccountEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "account")
     private Set<PartnerAccountEntity> partnerAccounts = new LinkedHashSet<>();
+
+    public void addBalance(AccountBalanceEntity balance) {
+        Optional<AccountBalanceEntity> existing = accountBalances.stream()
+                .filter(e -> e.getDateCreated() != null && e.getId() == balance.getId())
+                .findAny();
+
+        if (existing.isPresent()) {
+            AccountBalanceEntity existingBalance = existing.get();
+            existingBalance.setAccount(this);
+            existingBalance.setCurrency(balance.getCurrency());
+            existingBalance.setBalanceMinor(balance.getBalanceMinor());
+            existingBalance.setUpperThresholdMinor(balance.getUpperThresholdMinor());
+            existingBalance.setLowerThresholdMinor(balance.getLowerThresholdMinor());
+        } else {
+            accountBalances.add(balance);
+            balance.setAccount(this);
+        }
+    }
 }

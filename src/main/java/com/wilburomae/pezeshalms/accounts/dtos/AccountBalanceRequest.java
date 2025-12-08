@@ -1,6 +1,6 @@
 package com.wilburomae.pezeshalms.accounts.dtos;
 
-public record AccountBalanceRequest(long accountId,
+public record AccountBalanceRequest(Long id,
                                     long currencyId,
                                     long balanceMinor,
                                     Long upperThresholdMinor,
