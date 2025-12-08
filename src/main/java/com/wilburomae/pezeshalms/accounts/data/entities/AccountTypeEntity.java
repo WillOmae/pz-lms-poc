@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -30,4 +31,15 @@ public class AccountTypeEntity extends IdAuditableEntity {
     @OneToMany
     @JoinColumn(name = "parent_account_type_id")
     private Set<AccountTypeEntity> accountTypes = new LinkedHashSet<>();
+
+    public void addAccountType(AccountTypeEntity accountType) {
+        Optional<AccountTypeEntity> existing = accountTypes.stream()
+                .filter(e -> e.getId() == accountType.getId())
+                .findAny();
+
+        if (existing.isPresent()) return;
+
+        accountTypes.add(accountType);
+        accountType.setParentAccountType(this);
+    }
 }
