@@ -1,6 +1,7 @@
 package com.wilburomae.pezeshalms.users.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.transactions.data.entities.TransactionTypeComponentEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,7 @@ public class PermissionEntity extends IdAuditableEntity {
     @ManyToMany
     @JoinTable(name = "role_permissions", schema = "lms", joinColumns = @JoinColumn(name = "permission_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "permission")
+    private Set<TransactionTypeComponentEntity> transactionTypeComponents = new LinkedHashSet<>();
 }

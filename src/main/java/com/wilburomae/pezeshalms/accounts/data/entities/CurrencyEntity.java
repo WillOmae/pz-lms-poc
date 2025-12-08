@@ -1,6 +1,9 @@
 package com.wilburomae.pezeshalms.accounts.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.products.data.entities.LoanProductEntity;
+import com.wilburomae.pezeshalms.transactions.data.entities.TransactionEntity;
+import com.wilburomae.pezeshalms.transactions.data.entities.TransactionEntryEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;

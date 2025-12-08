@@ -2,6 +2,7 @@ package com.wilburomae.pezeshalms.users.data.entities;
 
 import com.wilburomae.pezeshalms.accounts.data.entities.PartnerAccountEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.products.data.entities.LoanProductPartnerEntity;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.users.dtos.Contact;
 import com.wilburomae.pezeshalms.users.dtos.Identification;
@@ -49,6 +50,9 @@ public class UserEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<PartnerAccountEntity> partnerAccounts = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<LoanProductPartnerEntity> loanProductPartner = new LinkedHashSet<>();
 
     public void addRole(RoleEntity role) {
         roles.add(role);

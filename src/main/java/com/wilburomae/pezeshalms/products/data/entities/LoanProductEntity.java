@@ -1,5 +1,6 @@
-package com.wilburomae.pezeshalms.accounts.data.entities;
+package com.wilburomae.pezeshalms.products.data.entities;
 
+import com.wilburomae.pezeshalms.accounts.data.entities.CurrencyEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -64,4 +67,10 @@ public class LoanProductEntity extends IdAuditableEntity {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "term_unit")
     private TermUnit termUnit;
+
+    @OneToMany(mappedBy = "loanProduct")
+    private Set<LoanProductPartnerEntity> loanProductPartner = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "loanProduct")
+    private Set<ProductTransactionTypeEntity> productTransactionType = new LinkedHashSet<>();
 }

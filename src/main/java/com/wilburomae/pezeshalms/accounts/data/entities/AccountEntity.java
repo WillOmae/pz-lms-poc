@@ -1,6 +1,7 @@
 package com.wilburomae.pezeshalms.accounts.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.transactions.data.entities.TransactionTypeComponentEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,12 @@ public class AccountEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "account")
     private Set<PartnerAccountEntity> partnerAccounts = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "debitAccount")
+    private Set<TransactionTypeComponentEntity> debitTransactionTypeComponents = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "creditAccount")
+    private Set<TransactionTypeComponentEntity> creditTransactionTypeComponents = new LinkedHashSet<>();
 
     public void addBalance(AccountBalanceEntity balance) {
         Optional<AccountBalanceEntity> existing = accountBalances.stream()
