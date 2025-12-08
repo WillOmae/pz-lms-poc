@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -32,4 +33,24 @@ public class TransactionTypeEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "transactionType")
     private Set<TransactionEntity> transactions = new LinkedHashSet<>();
+
+    public void addTransactionTypeComponent(TransactionTypeComponentEntity entity) {
+        Optional<TransactionTypeComponentEntity> existing = transactionTypeComponents.stream()
+                .filter(t -> t.getDateCreated() != null && t.getId() == entity.getId())
+                .findAny();
+
+        if (existing.isPresent()) {
+            TransactionTypeComponentEntity component = existing.get();
+            component.setName(entity.getName());
+            component.setDescription(entity.getDescription());
+            component.setTransactionType(entity.getTransactionType());
+            component.setExecutionOrder(entity.getExecutionOrder());
+            component.setPermission(entity.getPermission());
+            component.setDebitAccount(entity.getDebitAccount());
+            component.setCreditAccount(entity.getCreditAccount());
+        } else {
+            transactionTypeComponents.add(entity);
+            entity.setTransactionType(this);
+        }
+    }
 }
