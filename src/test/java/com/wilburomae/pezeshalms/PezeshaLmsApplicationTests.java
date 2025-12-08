@@ -1,6 +1,5 @@
 package com.wilburomae.pezeshalms;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
@@ -27,14 +27,13 @@ class PezeshaLmsApplicationTests {
 
     @Test
     void testDbInitialization() {
-        Assertions.assertDoesNotThrow(() -> {
-            Map<String, JpaRepository> repositories = applicationContext.getBeansOfType(JpaRepository.class);
-            for (var kv : repositories.entrySet()) {
-                String repositoryName = kv.getKey();
-                JpaRepository repository = kv.getValue();
-                long count = repository.count();
-                logger.info("Count of {} is {}", repositoryName, count);
-            }
-        });
+        assertDoesNotThrow(() -> applicationContext.getBeansOfType(JpaRepository.class)
+                .forEach((repositoryName, repository) -> {
+                    long count = repository.count();
+                    if (repositoryName.equals("permissionRepository")) {
+                        assertTrue(count > 0);
+                    }
+                    logger.info("Count of {} is {}", repositoryName, count);
+                }));
     }
 }
