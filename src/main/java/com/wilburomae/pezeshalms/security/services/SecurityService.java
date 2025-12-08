@@ -1,6 +1,8 @@
-package com.wilburomae.pezeshalms.security;
+package com.wilburomae.pezeshalms.security.services;
 
 import com.wilburomae.pezeshalms.common.dtos.Response;
+import com.wilburomae.pezeshalms.security.SecurityProperties;
+import com.wilburomae.pezeshalms.security.dtos.DBUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;

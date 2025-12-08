@@ -2,7 +2,7 @@ package com.wilburomae.pezeshalms.users.data.entities;
 
 import com.wilburomae.pezeshalms.accounts.data.entities.PartnerAccountEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
-import com.wilburomae.pezeshalms.security.CredentialEntity;
+import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.users.dtos.Contact;
 import com.wilburomae.pezeshalms.users.dtos.Identification;
 import jakarta.persistence.*;

@@ -1,5 +1,6 @@
-package com.wilburomae.pezeshalms.security;
+package com.wilburomae.pezeshalms.security.dtos;
 
+import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.users.data.entities.PermissionEntity;
 import com.wilburomae.pezeshalms.users.data.entities.RoleEntity;
 import org.springframework.security.core.GrantedAuthority;

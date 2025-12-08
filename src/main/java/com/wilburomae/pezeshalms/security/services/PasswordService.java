@@ -1,6 +1,7 @@
-package com.wilburomae.pezeshalms.security;
+package com.wilburomae.pezeshalms.security.services;
 
 import com.wilburomae.pezeshalms.common.dtos.Response;
+import com.wilburomae.pezeshalms.security.dtos.PasswordChangeRequest;
 import org.springframework.stereotype.Service;
 
 @Service

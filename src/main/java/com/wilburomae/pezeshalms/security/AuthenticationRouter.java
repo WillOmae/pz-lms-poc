@@ -1,6 +1,10 @@
 package com.wilburomae.pezeshalms.security;
 
 import com.wilburomae.pezeshalms.common.routers.PermissionChecker;
+import com.wilburomae.pezeshalms.security.dtos.DBUserDetails;
+import com.wilburomae.pezeshalms.security.dtos.PasswordChangeRequest;
+import com.wilburomae.pezeshalms.security.services.PasswordService;
+import com.wilburomae.pezeshalms.security.services.SecurityService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;

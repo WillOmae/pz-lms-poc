@@ -1,4 +1,4 @@
-package com.wilburomae.pezeshalms.security;
+package com.wilburomae.pezeshalms.security.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import com.wilburomae.pezeshalms.users.data.entities.UserEntity;

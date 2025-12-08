@@ -1,5 +1,7 @@
-package com.wilburomae.pezeshalms.security;
+package com.wilburomae.pezeshalms.security.services;
 
+import com.wilburomae.pezeshalms.security.data.repositories.CredentialRepository;
+import com.wilburomae.pezeshalms.security.dtos.DBUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
