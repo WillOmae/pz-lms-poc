@@ -35,7 +35,7 @@ public class AccountsUpsertService implements UpsertService<AccountRequest> {
     @Transactional
     @Override
     public Response<Long> upsert(Long id, AccountRequest request) {
-        Response<AccountEntity> initResponse = initEntity(id, null, AccountEntity::new);
+        Response<AccountEntity> initResponse = initEntity(id, accountRepository, AccountEntity::new);
         if (initResponse.responseCode().isError()) {
             return new Response<>(NOT_FOUND, "Account not found", null);
         }
