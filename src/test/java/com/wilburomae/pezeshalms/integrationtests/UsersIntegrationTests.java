@@ -24,26 +24,26 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
     private static final Random RANDOM = new SecureRandom();
     private static final String BASE_URL = "/users";
 
-    private RoleGenerator roleGenerator;
+    private UserGenerator userGenerator;
 
     @Autowired
     RoleRepository roleRepository;
 
     @BeforeEach
     public void setUp() {
-        if (roleGenerator == null) {
-            roleGenerator = new RoleGenerator(integrationTestHelper, roleRepository);
+        if (userGenerator == null) {
+            userGenerator = new UserGenerator(integrationTestHelper, roleRepository);
         }
     }
 
     @Test
     void whenCreateNew_thenReturnHttp201() throws Exception {
-        roleGenerator.createRequest();
+        userGenerator.createRequest();
     }
 
     @Test
     void whenCreateDuplicate_thenReturnHttp409() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         Long result = integrationTestHelper.create(BASE_URL, created.getValue(), Long.class, CONFLICT);
         Assertions.assertNull(result);
@@ -51,7 +51,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         User result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), User.class, OK);
         Assertions.assertNotNull(result);
@@ -59,7 +59,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         User result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), User.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -73,7 +73,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         Long result = integrationTestHelper.update(BASE_URL, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -81,7 +81,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         Void result = integrationTestHelper.delete(BASE_URL, created.getKey(), Void.class, OK);
         Assertions.assertNull(result);
@@ -89,19 +89,19 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
+        Map.Entry<Long, UserRequest> created = userGenerator.createRequest();
 
         Void result = integrationTestHelper.delete(BASE_URL, created.getKey() + 1, Void.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
-    public static class RoleGenerator {
+    public static class UserGenerator {
 
         private final IntegrationTestHelper integrationTestHelper;
         private final List<RoleEntity> roles = new ArrayList<>();
         private final Supplier<String> nameSupplier = () -> "USER_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
 
-        public RoleGenerator(IntegrationTestHelper integrationTestHelper, RoleRepository roleRepository) {
+        public UserGenerator(IntegrationTestHelper integrationTestHelper, RoleRepository roleRepository) {
             this.integrationTestHelper = integrationTestHelper;
             this.roles.addAll(roleRepository.findAll());
         }
