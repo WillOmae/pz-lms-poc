@@ -107,11 +107,15 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
         }
 
         public Map.Entry<Long, UserRequest> createRequest() throws Exception {
+            return createRequest("CUSTOMER");
+        }
+
+        public Map.Entry<Long, UserRequest> createRequest(String type) throws Exception {
             String name = nameSupplier.get();
             Contact contact = new Contact(name + "@test.com", "EMAIL", true);
             Identification identification = new Identification(String.valueOf(RANDOM.nextInt(100000, 1000000)), 1L, "National ID");
             List<Long> ids = roles.stream().map(RoleEntity::getId).toList();
-            UserRequest request = new UserRequest(name, "CUSTOMER", List.of(contact), List.of(identification), ids);
+            UserRequest request = new UserRequest(name, type, List.of(contact), List.of(identification), ids);
             Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
             Assertions.assertNotNull(result);
             return Map.entry(result, request);
