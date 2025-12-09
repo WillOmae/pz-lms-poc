@@ -29,6 +29,10 @@ public class TransactionEntity extends IdAuditableEntity {
     @JoinColumn(name = "transaction_type_id")
     private TransactionTypeEntity transactionType;
 
+    @OneToOne
+    @JoinColumn(name = "linked_transaction_id")
+    private TransactionEntity originalTransaction;
+
     @OneToMany(mappedBy = "transaction")
     private Set<TransactionEntryEntity> transactionEntries = new LinkedHashSet<>();
 }

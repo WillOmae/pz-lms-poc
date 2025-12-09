@@ -72,5 +72,5 @@ public class LoanProductEntity extends IdAuditableEntity {
     private Set<LoanProductPartnerEntity> loanProductPartner = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "loanProduct")
-    private Set<ProductTransactionTypeEntity> productTransactionType = new LinkedHashSet<>();
+    private Set<ProductReasonTypeEntity> productTransactionType = new LinkedHashSet<>();
 }
