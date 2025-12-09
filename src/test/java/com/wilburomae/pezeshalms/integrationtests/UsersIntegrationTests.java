@@ -38,12 +38,12 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenCreateNew_thenReturnHttp201() throws Exception {
-        createUserRequest(nameSupplier.get());
+        createRequest(nameSupplier.get());
     }
 
     @Test
     void whenCreateDuplicate_thenReturnHttp409() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.create(baseUrl, created.getValue(), Long.class, CONFLICT);
         Assertions.assertNull(result);
@@ -51,7 +51,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Role result = integrationTestHelper.fetchById(baseUrl, created.getKey(), emptyMap(), Role.class, OK);
         Assertions.assertNotNull(result);
@@ -59,7 +59,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Role result = integrationTestHelper.fetchById(baseUrl, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -73,7 +73,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.update(baseUrl, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -81,7 +81,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey(), Void.class, OK);
         Assertions.assertNull(result);
@@ -89,19 +89,19 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, UserRequest> created = createUserRequest(nameSupplier.get());
+        Map.Entry<Long, UserRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey() + 1, Void.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
-    private Map.Entry<Long, UserRequest> createUserRequest(String name) throws Exception {
+    private Map.Entry<Long, UserRequest> createRequest(String name) throws Exception {
         Contact contact = new Contact(name + "@test.com", "EMAIL", true);
         Identification identification = new Identification(String.valueOf(RANDOM.nextInt(100000, 1000000)), 1L, "National ID");
         List<Long> ids = roles.stream().map(RoleEntity::getId).toList();
-        UserRequest userRequest = new UserRequest(name, "CUSTOMER", List.of(contact), List.of(identification), ids);
-        Long result = integrationTestHelper.create(baseUrl, userRequest, Long.class, CREATED);
+        UserRequest request = new UserRequest(name, "CUSTOMER", List.of(contact), List.of(identification), ids);
+        Long result = integrationTestHelper.create(baseUrl, request, Long.class, CREATED);
         Assertions.assertNotNull(result);
-        return Map.entry(result, userRequest);
+        return Map.entry(result, request);
     }
 }

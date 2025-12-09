@@ -24,12 +24,12 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenCreateNew_thenReturnHttp201() throws Exception {
-        createCurrencyRequest(nameSupplier.get());
+        createRequest(nameSupplier.get());
     }
 
     @Test
     void whenCreateDuplicate_thenReturnHttp409() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.create(baseUrl, created.getValue(), Long.class, CONFLICT);
         Assertions.assertNull(result);
@@ -37,7 +37,7 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Currency result = integrationTestHelper.fetchById(baseUrl, created.getKey(), emptyMap(), Currency.class, OK);
         Assertions.assertNotNull(result);
@@ -45,7 +45,7 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Currency result = integrationTestHelper.fetchById(baseUrl, created.getKey() + 1, emptyMap(), Currency.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -59,7 +59,7 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.update(baseUrl, created.getKey(), created.getValue(), Long.class, OK);
         Assertions.assertNotNull(result);
@@ -67,7 +67,7 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.update(baseUrl, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -75,7 +75,7 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey(), Void.class, OK);
         Assertions.assertNull(result);
@@ -83,18 +83,18 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, CurrencyRequest> created = createCurrencyRequest(nameSupplier.get());
+        Map.Entry<Long, CurrencyRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey() + 1, Void.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
-    private Map.Entry<Long, CurrencyRequest> createCurrencyRequest(String name) throws Exception {
+    private Map.Entry<Long, CurrencyRequest> createRequest(String name) throws Exception {
         String code = fixedRandom(UPPER, 3);
         String numericCode = fixedRandom(DIGITS, 3);
-        CurrencyRequest currencyRequest = new CurrencyRequest(code, numericCode, "null", name, (short) 2, true);
-        Long result = integrationTestHelper.create(baseUrl, currencyRequest, Long.class, CREATED);
+        CurrencyRequest request = new CurrencyRequest(code, numericCode, "null", name, (short) 2, true);
+        Long result = integrationTestHelper.create(baseUrl, request, Long.class, CREATED);
         Assertions.assertNotNull(result);
-        return Map.entry(result, currencyRequest);
+        return Map.entry(result, request);
     }
 }

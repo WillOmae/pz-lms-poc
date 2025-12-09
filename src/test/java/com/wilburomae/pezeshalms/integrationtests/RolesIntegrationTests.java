@@ -36,12 +36,12 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenCreateNew_thenReturnHttp201() throws Exception {
-        createRoleRequest(nameSupplier.get());
+        createRequest(nameSupplier.get());
     }
 
     @Test
     void whenCreateDuplicate_thenReturnHttp409() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.create(baseUrl, created.getValue(), Long.class, CONFLICT);
         Assertions.assertNull(result);
@@ -49,7 +49,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Role result = integrationTestHelper.fetchById(baseUrl, created.getKey(), emptyMap(), Role.class, OK);
         Assertions.assertNotNull(result);
@@ -57,7 +57,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Role result = integrationTestHelper.fetchById(baseUrl, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -71,7 +71,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.update(baseUrl, created.getKey(), created.getValue(), Long.class, OK);
         Assertions.assertNotNull(result);
@@ -79,7 +79,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenUpdateNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Long result = integrationTestHelper.update(baseUrl, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
         Assertions.assertNull(result);
@@ -87,7 +87,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey(), Void.class, OK);
         Assertions.assertNull(result);
@@ -95,17 +95,17 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
 
         Void result = integrationTestHelper.delete(baseUrl, created.getKey() + 1, Void.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
-    private Map.Entry<Long, RoleRequest> createRoleRequest(String name) throws Exception {
+    private Map.Entry<Long, RoleRequest> createRequest(String name) throws Exception {
         List<Long> ids = permissions.stream().map(PermissionEntity::getId).toList();
-        RoleRequest roleRequest = new RoleRequest(name, "Description for " + name, ids);
-        Long result = integrationTestHelper.create(baseUrl, roleRequest, Long.class, CREATED);
+        RoleRequest request = new RoleRequest(name, "Description for " + name, ids);
+        Long result = integrationTestHelper.create(baseUrl, request, Long.class, CREATED);
         Assertions.assertNotNull(result);
-        return Map.entry(result, roleRequest);
+        return Map.entry(result, request);
     }
 }
