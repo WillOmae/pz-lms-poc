@@ -99,7 +99,7 @@ public class DbHelper {
     }
 
     private List<PermissionEntity> initPermissions() {
-        List<String> entities = List.of("ROLES", "USERS", "ACCOUNTS", "ACCOUNT_BALANCES", "ACCOUNT_STATUSES", "ACCOUNT_TYPES", "CURRENCIES", "PARTNER_ACCOUNTS", "CREDENTIALS", "LOGIN_ATTEMPTS", "TRANSACTION_TYPES", "TRANSACTION_TYPE_COMPONENTS", "TRANSACTIONS", "TRANSACTION_ENTRIES");
+        List<String> entities = List.of("ROLES", "USERS", "ACCOUNTS", "ACCOUNT_BALANCES", "ACCOUNT_STATUSES", "ACCOUNT_TYPES", "CURRENCIES", "PARTNER_ACCOUNTS", "CREDENTIALS", "LOGIN_ATTEMPTS", "TRANSACTION_TYPES", "TRANSACTIONS", "TRANSACTION_ENTRIES", "REASON_TYPES");
         List<String> actions = List.of("READ", "WRITE", "DELETE");
         List<PermissionEntity> permissions = new ArrayList<>((actions.size() * entities.size()) + 1);
         for (String entity : entities) {
