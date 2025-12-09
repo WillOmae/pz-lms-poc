@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.function.ServerRequest;
@@ -61,10 +62,24 @@ public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
         }
 
         try {
-            return upsertService.upsert(id, request).toServerResponse();
+            return actuator(id, request, 0).toServerResponse();
         } catch (DataIntegrityViolationException e) {
             logger.error(e.getMessage(), e);
             return new Response<>(CONFLICT, "Duplicate entry", null).toServerResponse();
+        }
+    }
+
+    private Response<Long> actuator(Long id, T request, int retryCount) {
+        try {
+            return upsertService.upsert(id, request);
+        } catch (OptimisticLockingFailureException e) {
+            if (retryCount < 3) {
+                logger.error("Optimistic locking failure encountered. Retrying", e);
+                return actuator(id, request, ++retryCount);
+            } else {
+                logger.error("Optimistic locking failure encountered. Retries exhausted", e);
+                return new Response<>(CONFLICT, "Concurrent update", null);
+            }
         }
     }
 }

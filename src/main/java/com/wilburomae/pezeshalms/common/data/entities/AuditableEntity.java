@@ -1,9 +1,7 @@
 package com.wilburomae.pezeshalms.common.data.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +17,10 @@ public abstract class AuditableEntity {
 
     @Column(name = "date_updated")
     private OffsetDateTime dateUpdated;
+
+    @Version
+    @Setter(AccessLevel.PRIVATE)
+    private Long version;
 
     @PrePersist
     protected void onCreate() {
