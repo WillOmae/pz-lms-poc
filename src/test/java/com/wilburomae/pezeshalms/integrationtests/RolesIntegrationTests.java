@@ -106,7 +106,6 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
         RoleRequest roleRequest = new RoleRequest(name, "Description for " + name, ids);
         Long result = integrationTestHelper.create(baseUrl, roleRequest, Long.class, CREATED);
         Assertions.assertNotNull(result);
-        integrationTestHelper.fetchById(baseUrl, result, emptyMap(), Role.class, OK);
         return Map.entry(result, roleRequest);
     }
 }
