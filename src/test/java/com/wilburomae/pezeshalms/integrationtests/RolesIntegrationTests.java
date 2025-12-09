@@ -1,5 +1,6 @@
 package com.wilburomae.pezeshalms.integrationtests;
 
+import com.wilburomae.pezeshalms.helpers.IntegrationTestHelper;
 import com.wilburomae.pezeshalms.users.data.entities.PermissionEntity;
 import com.wilburomae.pezeshalms.users.data.repositories.PermissionRepository;
 import com.wilburomae.pezeshalms.users.dtos.Role;
@@ -19,93 +20,105 @@ import static org.springframework.http.HttpStatus.*;
 public class RolesIntegrationTests extends BaseIntegrationTests {
 
     private static final Random RANDOM = new SecureRandom();
+    private static final String BASE_URL = "/roles";
 
-    private final String baseUrl = "/roles";
-    private final List<PermissionEntity> permissions = new ArrayList<>();
-    private final Supplier<String> nameSupplier = () -> "ROLE_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
+    private RoleGenerator roleGenerator;
 
     @Autowired
     PermissionRepository permissionRepository;
 
     @BeforeEach
     public void setUp() {
-        if (permissions.isEmpty()) {
-            permissions.addAll(permissionRepository.findAll());
+        if (roleGenerator == null) {
+            roleGenerator = new RoleGenerator(integrationTestHelper, permissionRepository);
         }
     }
 
     @Test
     void whenCreateNew_thenReturnHttp201() throws Exception {
-        createRequest(nameSupplier.get());
+        roleGenerator.createRequest();
     }
 
     @Test
     void whenCreateDuplicate_thenReturnHttp409() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Long result = integrationTestHelper.create(baseUrl, created.getValue(), Long.class, CONFLICT);
+        Long result = integrationTestHelper.create(BASE_URL, created.getValue(), Long.class, CONFLICT);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(baseUrl, created.getKey(), emptyMap(), Role.class, OK);
+        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), Role.class, OK);
         Assertions.assertNotNull(result);
     }
 
     @Test
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(baseUrl, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
+        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenFetch_thenReturnHttp200() throws Exception {
-        Collection<Role> result = integrationTestHelper.fetch(baseUrl, emptyMap(), Role.class, OK);
+        Collection<Role> result = integrationTestHelper.fetch(BASE_URL, emptyMap(), Role.class, OK);
         Assertions.assertNotNull(result);
     }
 
     @Test
     void whenUpdateExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Long result = integrationTestHelper.update(baseUrl, created.getKey(), created.getValue(), Long.class, OK);
+        Long result = integrationTestHelper.update(BASE_URL, created.getKey(), created.getValue(), Long.class, OK);
         Assertions.assertNotNull(result);
     }
 
     @Test
     void whenUpdateNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Long result = integrationTestHelper.update(baseUrl, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
+        Long result = integrationTestHelper.update(BASE_URL, created.getKey() + 1, created.getValue(), Long.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenDeleteExisting_thenReturnHttp200() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Void result = integrationTestHelper.delete(baseUrl, created.getKey(), Void.class, OK);
+        Void result = integrationTestHelper.delete(BASE_URL, created.getKey(), Void.class, OK);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
-        Map.Entry<Long, RoleRequest> created = createRequest(nameSupplier.get());
+        Map.Entry<Long, RoleRequest> created = roleGenerator.createRequest();
 
-        Void result = integrationTestHelper.delete(baseUrl, created.getKey() + 1, Void.class, NOT_FOUND);
+        Void result = integrationTestHelper.delete(BASE_URL, created.getKey() + 1, Void.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
-    private Map.Entry<Long, RoleRequest> createRequest(String name) throws Exception {
-        List<Long> ids = permissions.stream().map(PermissionEntity::getId).toList();
-        RoleRequest request = new RoleRequest(name, "Description for " + name, ids);
-        Long result = integrationTestHelper.create(baseUrl, request, Long.class, CREATED);
-        Assertions.assertNotNull(result);
-        return Map.entry(result, request);
+    public static class RoleGenerator {
+
+        private final IntegrationTestHelper integrationTestHelper;
+        private final List<PermissionEntity> permissions = new ArrayList<>();
+        private final Supplier<String> nameSupplier = () -> "ROLE_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
+
+        public RoleGenerator(IntegrationTestHelper integrationTestHelper, PermissionRepository permissionRepository) {
+            this.integrationTestHelper = integrationTestHelper;
+            this.permissions.addAll(permissionRepository.findAll());
+        }
+
+        public Map.Entry<Long, RoleRequest> createRequest() throws Exception {
+            String name = nameSupplier.get();
+            List<Long> ids = permissions.stream().map(PermissionEntity::getId).toList();
+            RoleRequest request = new RoleRequest(name, "Description for " + name, ids);
+            Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
+            Assertions.assertNotNull(result);
+            return Map.entry(result, request);
+        }
     }
 }
