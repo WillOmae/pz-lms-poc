@@ -5,6 +5,7 @@ import com.wilburomae.pezeshalms.accounts.data.entities.AccountEntity;
 import java.util.List;
 
 public record Account(long id,
+                      String name,
                       AccountType type,
                       boolean overdrawable,
                       AccountStatus status,
@@ -14,6 +15,6 @@ public record Account(long id,
         AccountType type = AccountType.from(entity.getAccountType());
         AccountStatus status = AccountStatus.from(entity.getAccountStatus());
         List<AccountBalance> balances = entity.getAccountBalances().stream().map(AccountBalance::from).toList();
-        return new Account(entity.getId(), type, entity.isOverdrawable(), status, balances);
+        return new Account(entity.getId(), entity.getName(), type, entity.isOverdrawable(), status, balances);
     }
 }

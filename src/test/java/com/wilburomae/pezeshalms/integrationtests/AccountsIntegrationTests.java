@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptyMap;
 import static org.springframework.http.HttpStatus.*;
@@ -84,8 +85,9 @@ public class AccountsIntegrationTests extends BaseIntegrationTests {
 
         private final IntegrationTestHelper integrationTestHelper;
         private final List<Long> currencies = new ArrayList<>();
-        private final List<Long> types = new ArrayList<>();
+        private final Map<String, List<Long>> typeIdWithRootNames = new HashMap<>();
         private final List<Long> statuses = new ArrayList<>();
+        private final Supplier<String> nameSupplier = () -> "ACCOUNT_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
 
         public AccountGenerator(IntegrationTestHelper integrationTestHelper) throws Exception {
             this.integrationTestHelper = integrationTestHelper;
@@ -97,11 +99,10 @@ public class AccountsIntegrationTests extends BaseIntegrationTests {
             }
 
             AccountTypeGenerator typeGenerator = new AccountTypeGenerator(integrationTestHelper);
-            for (int i = 0; i < 5; i++) {
-                Map.Entry<Long, AccountTypeRequest> parent = typeGenerator.createRequest(null);
-                Map.Entry<Long, AccountTypeRequest> intermediate = typeGenerator.createRequest(parent.getKey());
-                Map.Entry<Long, AccountTypeRequest> child = typeGenerator.createRequest(intermediate.getKey());
-                types.add(child.getKey());
+            Map<String, Long> rootTypes = typeGenerator.getRootTypes();
+            for (Map.Entry<String, Long> rootType : rootTypes.entrySet()) {
+                Map.Entry<Long, AccountTypeRequest> child = typeGenerator.createRequest(rootType.getValue());
+                typeIdWithRootNames.computeIfAbsent(rootType.getKey(), k -> new ArrayList<>()).add(child.getKey());
             }
 
             AccountStatusGenerator statusGenerator = new AccountStatusGenerator(integrationTestHelper);
@@ -112,15 +113,18 @@ public class AccountsIntegrationTests extends BaseIntegrationTests {
         }
 
         public Map.Entry<Long, AccountRequest> createRequest() throws Exception {
+            String name = nameSupplier.get();
             List<AccountBalanceRequest> balances = new ArrayList<>();
             for (Long currencyId : currencies) {
                 AccountBalanceRequest balance = new AccountBalanceRequest(null, currencyId, 0, 1000000L, 100L);
                 balances.add(balance);
             }
 
-            long typeId = types.get(RANDOM.nextInt(types.size()));
+            List<Long> flattened = new ArrayList<>();
+            typeIdWithRootNames.values().forEach(flattened::addAll);
+            long typeId = flattened.get(RANDOM.nextInt(typeIdWithRootNames.size()));
             long statusId = statuses.get(RANDOM.nextInt(statuses.size()));
-            AccountRequest request = new AccountRequest(null, typeId, false, statusId, balances);
+            AccountRequest request = new AccountRequest(name, "Description for " + name + ".", typeId, false, statusId, balances);
             Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
             Assertions.assertNotNull(result);
             return Map.entry(result, request);

@@ -1,5 +1,6 @@
 package com.wilburomae.pezeshalms.transactions.data.entities;
 
+import com.wilburomae.pezeshalms.accounts.data.entities.AccountEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
 import com.wilburomae.pezeshalms.products.data.entities.ProductTransactionTypeEntity;
 import jakarta.persistence.*;
@@ -28,29 +29,36 @@ public class TransactionTypeEntity extends IdAuditableEntity {
     @OneToMany(mappedBy = "transactionType")
     private Set<ProductTransactionTypeEntity> productTransactionTypes = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "transactionType", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<TransactionTypeComponentEntity> transactionTypeComponents = new LinkedHashSet<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "transaction_types_debit_accounts", schema = "lms", joinColumns = @JoinColumn(name = "transaction_type_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private Set<AccountEntity> debitAccounts = new LinkedHashSet<>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "transaction_types_credit_accounts", schema = "lms", joinColumns = @JoinColumn(name = "transaction_type_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private Set<AccountEntity> creditAccounts = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "transactionType")
     private Set<TransactionEntity> transactions = new LinkedHashSet<>();
 
-    public void addTransactionTypeComponent(TransactionTypeComponentEntity entity) {
-        Optional<TransactionTypeComponentEntity> existing = transactionTypeComponents.stream()
+    public void addDebitAccount(AccountEntity entity) {
+        Optional<AccountEntity> existing = debitAccounts.stream()
                 .filter(t -> t.getDateCreated() != null && t.getId() == entity.getId())
                 .findAny();
 
-        if (existing.isPresent()) {
-            TransactionTypeComponentEntity component = existing.get();
-            component.setName(entity.getName());
-            component.setDescription(entity.getDescription());
-            component.setTransactionType(entity.getTransactionType());
-            component.setExecutionOrder(entity.getExecutionOrder());
-            component.setPermission(entity.getPermission());
-            component.setDebitAccount(entity.getDebitAccount());
-            component.setCreditAccount(entity.getCreditAccount());
-        } else {
-            transactionTypeComponents.add(entity);
-            entity.setTransactionType(this);
-        }
+        if (existing.isPresent()) return;
+
+        debitAccounts.add(entity);
+        entity.getDebitTransactionTypes().add(this);
+    }
+
+    public void addCreditAccount(AccountEntity entity) {
+        Optional<AccountEntity> existing = creditAccounts.stream()
+                .filter(t -> t.getDateCreated() != null && t.getId() == entity.getId())
+                .findAny();
+
+        if (existing.isPresent()) return;
+
+        creditAccounts.add(entity);
+        entity.getCreditTransactionTypes().add(this);
     }
 }

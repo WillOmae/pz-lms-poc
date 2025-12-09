@@ -1,5 +1,7 @@
 package com.wilburomae.pezeshalms.helpers;
 
+import com.wilburomae.pezeshalms.accounts.data.entities.AccountTypeEntity;
+import com.wilburomae.pezeshalms.accounts.data.repositories.AccountTypeRepository;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialStatusEntity;
 import com.wilburomae.pezeshalms.security.data.repositories.CredentialStatusRepository;
@@ -27,6 +29,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wilburomae.pezeshalms.integrationtests.AccountTypesIntegrationTests.ROOT_ACCOUNT_TYPES;
+
 @Component
 public class DbHelper {
 
@@ -44,6 +48,8 @@ public class DbHelper {
     UserRepository userRepository;
     @Autowired
     IdentificationTypeRepository identificationTypeRepository;
+    @Autowired
+    AccountTypeRepository accountTypeRepository;
     @Autowired
     UsersUpsertService usersUpsertService;
     @Autowired
@@ -65,6 +71,18 @@ public class DbHelper {
         List<CredentialStatusEntity> credentialStatuses = initCredentialStatuses();
         List<IdentificationTypeEntity> idTypes = initIdentificationTypes();
         UserEntity user = initUsers(role, credentialStatuses, idTypes);
+        List<AccountTypeEntity> accountTypes = initAccountTypes();
+    }
+
+    private List<AccountTypeEntity> initAccountTypes() {
+        List<AccountTypeEntity> types = new ArrayList<>(ROOT_ACCOUNT_TYPES.size());
+        for (String name : ROOT_ACCOUNT_TYPES) {
+            AccountTypeEntity type = new AccountTypeEntity();
+            type.setName(name);
+            type.setDescription("Account type for " + name + ".");
+            types.add(type);
+        }
+        return accountTypeRepository.saveAll(types);
     }
 
     private List<PermissionEntity> initPermissions() {

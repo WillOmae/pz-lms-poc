@@ -1,7 +1,7 @@
 package com.wilburomae.pezeshalms.transactions.data.entities;
 
-import com.wilburomae.pezeshalms.accounts.data.entities.CurrencyEntity;
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,15 +15,15 @@ import java.util.Set;
 @Table(name = "transactions", schema = "lms")
 public class TransactionEntity extends IdAuditableEntity {
 
+    @Column(name = "idempotency_key")
+    private String idempotencyKey;
+
     @Column(name = "transaction_reference")
     private String transactionReference;
 
-    @Column(name = "amount_minor")
-    private long amountMinor;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "currency")
-    private CurrencyEntity currency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "opposite_party_id")
+    private UserEntity oppositeParty;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_type_id")

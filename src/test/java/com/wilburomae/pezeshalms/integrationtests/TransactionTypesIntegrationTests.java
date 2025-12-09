@@ -4,7 +4,6 @@ import com.wilburomae.pezeshalms.accounts.dtos.AccountRequest;
 import com.wilburomae.pezeshalms.helpers.IntegrationTestHelper;
 import com.wilburomae.pezeshalms.integrationtests.AccountsIntegrationTests.AccountGenerator;
 import com.wilburomae.pezeshalms.transactions.dtos.TransactionType;
-import com.wilburomae.pezeshalms.transactions.dtos.TransactionTypeComponentRequest;
 import com.wilburomae.pezeshalms.transactions.dtos.TransactionTypeRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,7 +94,6 @@ public class TransactionTypesIntegrationTests extends BaseIntegrationTests {
         private final IntegrationTestHelper integrationTestHelper;
         private final List<Long> accounts = new ArrayList<>();
         private final Supplier<String> nameSupplier = () -> "TRANSACTION_TYPE_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
-        private final Supplier<String> balanceNameSupplier = () -> "TRANSACTION_TYPE_COMPONENT_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
 
         public TransactionTypeGenerator(IntegrationTestHelper integrationTestHelper) throws Exception {
             this.integrationTestHelper = integrationTestHelper;
@@ -109,16 +107,14 @@ public class TransactionTypesIntegrationTests extends BaseIntegrationTests {
 
         public Map.Entry<Long, TransactionTypeRequest> createRequest() throws Exception {
             String name = nameSupplier.get();
-            List<TransactionTypeComponentRequest> components = new ArrayList<>();
+            List<Long> debitAccounts = new ArrayList<>(accounts.size() / 2);
+            List<Long> creditAccounts = new ArrayList<>(accounts.size() / 2);
             for (int i = 0; i < accounts.size(); i += 2) {
-                long debitAccountId = accounts.get(i);
-                long creditAccountId = accounts.get(i + 1);
-                String balanceName = balanceNameSupplier.get();
-                TransactionTypeComponentRequest balance = new TransactionTypeComponentRequest(null, balanceName, "Description for " + balanceName + ".", (short) 1, debitAccountId, creditAccountId);
-                components.add(balance);
+                debitAccounts.add(accounts.get(i));
+                creditAccounts.add(accounts.get(i + 1));
             }
 
-            TransactionTypeRequest request = new TransactionTypeRequest(name, "Description for " + name + ".", false, components);
+            TransactionTypeRequest request = new TransactionTypeRequest(name, "Description for " + name + ".", false, debitAccounts, creditAccounts);
             Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
             Assertions.assertNotNull(result);
             return Map.entry(result, request);

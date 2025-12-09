@@ -8,9 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptyMap;
@@ -20,11 +18,12 @@ public class AccountTypesIntegrationTests extends BaseIntegrationTests {
 
     private static final Random RANDOM = new SecureRandom();
     private static final String BASE_URL = "/accounts/types";
+    public static final List<String> ROOT_ACCOUNT_TYPES = Arrays.asList("ASSETS", "LIABILITIES", "EQUITY", "INCOME", "EXPENSES");
 
     private AccountTypeGenerator accountTypeGenerator;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         if (accountTypeGenerator == null) {
             accountTypeGenerator = new AccountTypeGenerator(integrationTestHelper);
         }
@@ -109,17 +108,38 @@ public class AccountTypesIntegrationTests extends BaseIntegrationTests {
 
         private final IntegrationTestHelper integrationTestHelper;
         private final Supplier<String> nameSupplier = () -> "ACCOUNT_TYPE_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
+        private final Map<String, Long> rootTypes = new HashMap<>();
 
-        public AccountTypeGenerator(IntegrationTestHelper integrationTestHelper) {
+        public AccountTypeGenerator(IntegrationTestHelper integrationTestHelper) throws Exception {
             this.integrationTestHelper = integrationTestHelper;
+            Collection<AccountType> existing = integrationTestHelper.fetch(BASE_URL, emptyMap(), AccountType.class, OK);
+            if (existing.isEmpty()) {
+                for (String name : ROOT_ACCOUNT_TYPES) {
+                    Map.Entry<Long, AccountTypeRequest> created = createRequest(null, name);
+                    rootTypes.put(name, created.getKey());
+                }
+            } else {
+                for (AccountType type : existing) {
+                    if (type.parentTypeId() == null) {
+                        rootTypes.put(type.name(), type.id());
+                    }
+                }
+            }
         }
 
         public Map.Entry<Long, AccountTypeRequest> createRequest(Long parentId) throws Exception {
-            String name = nameSupplier.get();
+            return createRequest(parentId, nameSupplier.get());
+        }
+
+        public Map.Entry<Long, AccountTypeRequest> createRequest(Long parentId, String name) throws Exception {
             AccountTypeRequest request = new AccountTypeRequest(name, "Description for " + name, parentId);
             Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
             Assertions.assertNotNull(result);
             return Map.entry(result, request);
+        }
+
+        public Map<String, Long> getRootTypes() {
+            return Collections.unmodifiableMap(rootTypes);
         }
     }
 }

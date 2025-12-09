@@ -40,6 +40,8 @@ public class AccountsUpsertService implements UpsertService<AccountRequest> {
             return new Response<>(NOT_FOUND, "Account not found", null);
         }
         AccountEntity entity = initResponse.data();
+        entity.setName(request.name());
+        entity.setDescription(request.description());
 
         Optional<AccountTypeEntity> foundType = accountTypeRepository.findById(request.typeId());
         if (foundType.isEmpty()) {
