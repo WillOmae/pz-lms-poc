@@ -93,6 +93,14 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
         Assertions.assertNull(result);
     }
 
+    @Test
+    void whenDeleteNonExistent_thenReturnHttp404() throws Exception {
+        Map.Entry<Long, RoleRequest> created = createRoleRequest(nameSupplier.get());
+
+        Void result = integrationTestHelper.delete(baseUrl, created.getKey() + 1, Void.class, NOT_FOUND);
+        Assertions.assertNull(result);
+    }
+
     private Map.Entry<Long, RoleRequest> createRoleRequest(String name) throws Exception {
         List<Long> ids = permissions.stream().map(PermissionEntity::getId).toList();
         RoleRequest roleRequest = new RoleRequest(name, "Description for " + name, ids);

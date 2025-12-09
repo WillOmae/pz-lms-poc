@@ -3,7 +3,8 @@ package com.wilburomae.pezeshalms.common.routers;
 import com.wilburomae.pezeshalms.common.dtos.Response;
 import com.wilburomae.pezeshalms.common.services.UpsertService;
 import jakarta.servlet.ServletException;
-import org.apache.coyote.BadRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.function.HandlerFunction;
@@ -12,10 +13,11 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.*;
 
 public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
 
+    private final Logger logger = LoggerFactory.getLogger(GenericUpsertRouter.class);
     private final String permission;
     private final UpsertService<T> upsertService;
     private final Class<T> requestClass;
@@ -29,13 +31,15 @@ public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
     }
 
     @Override
-    public ServerResponse handle(ServerRequest req) throws ServletException, BadRequestException {
+    public ServerResponse handle(ServerRequest req) throws ServletException {
         PermissionChecker.validatePermission(permission);
 
         Long id = null;
         if (req.method() == HttpMethod.PUT) {
             if (!req.pathVariables().containsKey("id")) {
-                throw new IllegalArgumentException("PUT requests must include path variable 'id'");
+                Exception e = new IllegalArgumentException("PUT requests must include path variable 'id'");
+                logger.error(e.getMessage(), e);
+                return new Response<>(METHOD_NOT_ALLOWED, "Invalid resource", null).toServerResponse();
             }
             id = Long.valueOf(req.pathVariable("id"));
         }
@@ -44,17 +48,17 @@ public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
         try {
             request = req.body(requestClass);
         } catch (IOException e) {
-            throw new BadRequestException(e);
+            logger.error(e.getMessage(), e);
+            return new Response<>(BAD_REQUEST, "Invalid request body", null).toServerResponse();
         }
 
         validator.validate(request);
 
-        Response<Long> response;
         try {
-            response = upsertService.upsert(id, request);
+            return upsertService.upsert(id, request).toServerResponse();
         } catch (DataIntegrityViolationException e) {
-            response = new Response<>(CONFLICT, "Duplicate entry", null);
+            logger.error(e.getMessage(), e);
+            return new Response<>(CONFLICT, "Duplicate entry", null).toServerResponse();
         }
-        return response.toServerResponse();
     }
 }
