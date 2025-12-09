@@ -3,6 +3,7 @@ package com.wilburomae.pezeshalms.common.routers;
 import com.wilburomae.pezeshalms.common.dtos.Response;
 import com.wilburomae.pezeshalms.common.services.UpsertService;
 import jakarta.servlet.ServletException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -52,7 +53,12 @@ public class GenericUpsertRouter<T> implements HandlerFunction<ServerResponse> {
             return new Response<>(BAD_REQUEST, "Invalid request body", null).toServerResponse();
         }
 
-        validator.validate(request);
+        try {
+            validator.validate(request);
+        } catch (ConstraintViolationException e) {
+            logger.error(e.getMessage(), e);
+            return new Response<>(BAD_REQUEST, "Invalid request", null).toServerResponse();
+        }
 
         try {
             return upsertService.upsert(id, request).toServerResponse();
