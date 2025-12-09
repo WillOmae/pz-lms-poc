@@ -2,13 +2,21 @@ package com.wilburomae.pezeshalms.helpers;
 
 import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialStatusEntity;
-import com.wilburomae.pezeshalms.security.data.repositories.CredentialRepository;
 import com.wilburomae.pezeshalms.security.data.repositories.CredentialStatusRepository;
-import com.wilburomae.pezeshalms.users.data.entities.*;
+import com.wilburomae.pezeshalms.users.data.entities.IdentificationTypeEntity;
+import com.wilburomae.pezeshalms.users.data.entities.PermissionEntity;
+import com.wilburomae.pezeshalms.users.data.entities.RoleEntity;
+import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 import com.wilburomae.pezeshalms.users.data.repositories.IdentificationTypeRepository;
 import com.wilburomae.pezeshalms.users.data.repositories.PermissionRepository;
 import com.wilburomae.pezeshalms.users.data.repositories.RoleRepository;
 import com.wilburomae.pezeshalms.users.data.repositories.UserRepository;
+import com.wilburomae.pezeshalms.users.dtos.Contact;
+import com.wilburomae.pezeshalms.users.dtos.Identification;
+import com.wilburomae.pezeshalms.users.dtos.RoleRequest;
+import com.wilburomae.pezeshalms.users.dtos.UserRequest;
+import com.wilburomae.pezeshalms.users.services.RolesUpsertService;
+import com.wilburomae.pezeshalms.users.services.UsersUpsertService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class DbHelper {
@@ -27,19 +33,21 @@ public class DbHelper {
     @PersistenceContext
     private EntityManager em;
     @Autowired
-    private PlatformTransactionManager tm;
+    PlatformTransactionManager tm;
     @Autowired
-    private PermissionRepository permissionRepository;
+    PermissionRepository permissionRepository;
     @Autowired
-    private RoleRepository roleRepository;
+    RoleRepository roleRepository;
     @Autowired
-    private CredentialStatusRepository credentialStatusRepository;
+    CredentialStatusRepository credentialStatusRepository;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private CredentialRepository credentialRepository;
+    IdentificationTypeRepository identificationTypeRepository;
     @Autowired
-    private IdentificationTypeRepository identificationTypeRepository;
+    UsersUpsertService usersUpsertService;
+    @Autowired
+    RolesUpsertService rolesUpsertService;
 
     @SuppressWarnings("unchecked")
     public void cleanDatabase() {
@@ -60,9 +68,9 @@ public class DbHelper {
     }
 
     private List<PermissionEntity> initPermissions() {
-        List<String> entities = List.of("ROLES", "USERS", "LOGIN", "ACCOUNTS", "ACCOUNT_BALANCES", "ACCOUNT_STATUSES", "ACCOUNT_TYPES", "CURRENCIES", "PARTNER_ACCOUNTS", "CREDENTIALS", "LOGIN_ATTEMPTS", "TRANSACTION_TYPES", "TRANSACTION_TYPE_COMPONENTS", "TRANSACTIONS", "TRANSACTION_ENTRIES");
+        List<String> entities = List.of("ROLES", "USERS", "ACCOUNTS", "ACCOUNT_BALANCES", "ACCOUNT_STATUSES", "ACCOUNT_TYPES", "CURRENCIES", "PARTNER_ACCOUNTS", "CREDENTIALS", "LOGIN_ATTEMPTS", "TRANSACTION_TYPES", "TRANSACTION_TYPE_COMPONENTS", "TRANSACTIONS", "TRANSACTION_ENTRIES");
         List<String> actions = List.of("READ", "WRITE", "DELETE");
-        List<PermissionEntity> permissions = new ArrayList<>(actions.size() * entities.size());
+        List<PermissionEntity> permissions = new ArrayList<>((actions.size() * entities.size()) + 1);
         for (String entity : entities) {
             for (String action : actions) {
                 PermissionEntity permission = new PermissionEntity();
@@ -71,15 +79,20 @@ public class DbHelper {
                 permissions.add(permission);
             }
         }
+
+        PermissionEntity permission = new PermissionEntity();
+        permission.setName("LOGIN");
+        permission.setDescription("can login.");
+        permissions.add(permission);
+
         return permissionRepository.saveAll(permissions);
     }
 
     private RoleEntity initRoles(List<PermissionEntity> permissions) {
-        RoleEntity role = new RoleEntity();
-        role.setName("SYSADMIN");
-        role.setDescription("system administrator role");
-        role.setPermissions(new HashSet<>(permissions));
-        return roleRepository.save(role);
+        List<Long> ids = permissions.stream().map(PermissionEntity::getId).toList();
+        RoleRequest roleRequest = new RoleRequest("SYSADMIN", "System administrator role", ids);
+        Long id = rolesUpsertService.upsert(null, roleRequest).data();
+        return roleRepository.findById(id).orElseThrow();
     }
 
     private List<CredentialStatusEntity> initCredentialStatuses() {
@@ -107,32 +120,20 @@ public class DbHelper {
     }
 
     private UserEntity initUsers(RoleEntity role, List<CredentialStatusEntity> statuses, List<IdentificationTypeEntity> idTypes) {
-        UserEntity user = new UserEntity();
-        ContactEntity contact = new ContactEntity();
-        contact.setContact("tester@test.com");
-        contact.setUser(user);
-        contact.setPrimary(true);
-        contact.setContactType("EMAIL");
+        Contact contact = new Contact("tester@test.com", "EMAIL", true);
+        IdentificationTypeEntity idType = idTypes.getFirst();
+        Identification identification = new Identification("", idType.getId(), idType.getName());
+        UserRequest userRequest = new UserRequest("TESTER", "CUSTOMER", List.of(contact), List.of(identification), List.of(role.getId()));
+        Long id = usersUpsertService.upsert(null, userRequest).data();
 
-        IdentificationEntity identification = new IdentificationEntity();
-        identification.setIdNumber("123456789");
-        identification.setIdType(idTypes.getFirst());
-        identification.setUser(user);
-
-        user.setName("TESTER");
-        user.setType(EntityType.CUSTOMER);
-        user.setContacts(Set.of(contact));
-        user.setIds(Set.of(identification));
-        user.setRoles(Set.of(role));
-        user = userRepository.save(user);
-
+        UserEntity user = userRepository.findById(id).orElseThrow();
         CredentialEntity credential = new CredentialEntity();
         credential.setUser(user);
+        // bcrypted 123456
         credential.setHashedPassword("$2a$12$8ExHKvfczHsllvqB.oe9meg0JXupXfi0l5a37Z.kkcmNUsA/s5BmK");
         credential.setStatus(statuses.stream().filter(s -> s.getName().equals("ACTIVE")).findFirst().orElseThrow());
-        credential = credentialRepository.save(credential);
+        user.addCredential(credential);
 
-        user.setCredential(credential);
         return userRepository.save(user);
     }
 }

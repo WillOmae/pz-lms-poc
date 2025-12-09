@@ -33,7 +33,7 @@ public class UserEntity extends IdAuditableEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<ContactEntity> contacts = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private CredentialEntity credential;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -81,5 +81,10 @@ public class UserEntity extends IdAuditableEntity {
         entity.setUser(this);
 
         ids.add(entity);
+    }
+
+    public void addCredential(CredentialEntity credential) {
+        this.credential = credential;
+        credential.setUser(this);
     }
 }
