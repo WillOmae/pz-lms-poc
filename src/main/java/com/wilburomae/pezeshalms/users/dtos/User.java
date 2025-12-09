@@ -1,5 +1,6 @@
 package com.wilburomae.pezeshalms.users.dtos;
 
+import com.wilburomae.pezeshalms.common.dtos.IdName;
 import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public record User(long id,
                    String type,
                    List<Contact> contacts,
                    List<Identification> identifications,
-                   List<Role> roles) {
+                   List<IdName> roles) {
 
     public static User from(UserEntity entity) {
         List<Contact> contacts = entity.getContacts()
@@ -22,9 +23,9 @@ public record User(long id,
                 .map(e -> new Identification(e.getIdNumber(), e.getIdType().getId(), e.getIdType().getName()))
                 .toList();
 
-        List<Role> roles = entity.getRoles()
+        List<IdName> roles = entity.getRoles()
                 .stream()
-                .map(Role::from)
+                .map(role -> new IdName(role.getId(), role.getName()))
                 .toList();
 
         return new User(entity.getId(), entity.getName(), entity.getType().toString(), contacts, identifications, roles);

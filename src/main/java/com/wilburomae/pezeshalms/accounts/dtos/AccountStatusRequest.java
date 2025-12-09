@@ -1,4 +1,6 @@
 package com.wilburomae.pezeshalms.accounts.dtos;
 
-public record AccountStatusRequest(String name, String description) {
+import jakarta.validation.constraints.NotBlank;
+
+public record AccountStatusRequest(@NotBlank String name, @NotBlank String description) {
 }
