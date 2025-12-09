@@ -8,7 +8,7 @@ import java.util.List;
 public record TransactionType(long id,
                               String name,
                               String description,
-                              boolean reversible,
+                              Boolean reversible,
                               List<IdName> debitAccounts,
                               List<IdName> creditAccounts) {
 

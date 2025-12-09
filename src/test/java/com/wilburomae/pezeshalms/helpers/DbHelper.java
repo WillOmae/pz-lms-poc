@@ -1,7 +1,11 @@
 package com.wilburomae.pezeshalms.helpers;
 
+import com.wilburomae.pezeshalms.accounts.data.entities.AccountStatusEntity;
 import com.wilburomae.pezeshalms.accounts.data.entities.AccountTypeEntity;
+import com.wilburomae.pezeshalms.accounts.data.entities.CurrencyEntity;
+import com.wilburomae.pezeshalms.accounts.data.repositories.AccountStatusRepository;
 import com.wilburomae.pezeshalms.accounts.data.repositories.AccountTypeRepository;
+import com.wilburomae.pezeshalms.accounts.data.repositories.CurrencyRepository;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialEntity;
 import com.wilburomae.pezeshalms.security.data.entities.CredentialStatusEntity;
 import com.wilburomae.pezeshalms.security.data.repositories.CredentialStatusRepository;
@@ -19,6 +23,7 @@ import com.wilburomae.pezeshalms.users.dtos.RoleRequest;
 import com.wilburomae.pezeshalms.users.dtos.UserRequest;
 import com.wilburomae.pezeshalms.users.services.RolesUpsertService;
 import com.wilburomae.pezeshalms.users.services.UsersUpsertService;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.wilburomae.pezeshalms.integrationtests.AccountTypesIntegrationTests.ROOT_ACCOUNT_TYPES;
 
@@ -51,10 +57,15 @@ public class DbHelper {
     @Autowired
     AccountTypeRepository accountTypeRepository;
     @Autowired
+    CurrencyRepository currencyRepository;
+    @Autowired
+    AccountStatusRepository accountStatusRepository;
+    @Autowired
     UsersUpsertService usersUpsertService;
     @Autowired
     RolesUpsertService rolesUpsertService;
 
+    @PostConstruct
     @SuppressWarnings("unchecked")
     public void cleanDatabase() {
         TransactionTemplate tx = new TransactionTemplate(tm);
@@ -70,8 +81,10 @@ public class DbHelper {
         RoleEntity role = initRoles(permissions);
         List<CredentialStatusEntity> credentialStatuses = initCredentialStatuses();
         List<IdentificationTypeEntity> idTypes = initIdentificationTypes();
-        UserEntity user = initUsers(role, credentialStatuses, idTypes);
-        List<AccountTypeEntity> accountTypes = initAccountTypes();
+        initUsers(role, credentialStatuses, idTypes);
+        initAccountTypes();
+        initCurrencies();
+        initAccountStatuses();
     }
 
     private List<AccountTypeEntity> initAccountTypes() {
@@ -125,6 +138,18 @@ public class DbHelper {
         return credentialStatusRepository.saveAll(statuses);
     }
 
+    private List<AccountStatusEntity> initAccountStatuses() {
+        List<String> names = List.of("ACTIVE", "INACTIVE", "FROZEN", "BLOCKED");
+        List<AccountStatusEntity> statuses = new ArrayList<>(names.size());
+        for (String name : names) {
+            AccountStatusEntity status = new AccountStatusEntity();
+            status.setName(name);
+            status.setDescription("Description for " + name + ".");
+            statuses.add(status);
+        }
+        return accountStatusRepository.saveAll(statuses);
+    }
+
     private List<IdentificationTypeEntity> initIdentificationTypes() {
         List<String> names = List.of("National ID", "Passport");
         List<IdentificationTypeEntity> types = new ArrayList<>(names.size());
@@ -153,5 +178,21 @@ public class DbHelper {
         user.addCredential(credential);
 
         return userRepository.save(user);
+    }
+
+    private List<CurrencyEntity> initCurrencies() {
+        Map<String, String> codes = Map.of("KES", "123", "USD", "234", "UGX", "345");
+        List<CurrencyEntity> currencies = new ArrayList<>(codes.size());
+        for (Map.Entry<String, String> entry : codes.entrySet()) {
+            CurrencyEntity currency = new CurrencyEntity();
+            currency.setCode(entry.getKey());
+            currency.setNumericCode(entry.getValue());
+            currency.setName(entry.getKey());
+            currency.setSymbol(entry.getValue());
+            currency.setDecimalPlaces((short) 2);
+            currency.setActive(true);
+            currencies.add(currency);
+        }
+        return currencyRepository.saveAll(currencies);
     }
 }
