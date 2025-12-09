@@ -5,7 +5,6 @@ import com.wilburomae.pezeshalms.helpers.IntegrationTestHelper;
 import com.wilburomae.pezeshalms.integrationtests.AccountStatusesIntegrationTests.AccountStatusGenerator;
 import com.wilburomae.pezeshalms.integrationtests.AccountTypesIntegrationTests.AccountTypeGenerator;
 import com.wilburomae.pezeshalms.integrationtests.CurrenciesIntegrationTests.CurrencyGenerator;
-import com.wilburomae.pezeshalms.users.dtos.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ public class AccountsIntegrationTests extends BaseIntegrationTests {
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
         Map.Entry<Long, AccountRequest> created = accountGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), Role.class, OK);
+        Account result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), Account.class, OK);
         Assertions.assertNotNull(result);
     }
 
@@ -47,13 +46,13 @@ public class AccountsIntegrationTests extends BaseIntegrationTests {
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
         Map.Entry<Long, AccountRequest> created = accountGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
+        Account result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), Account.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenFetch_thenReturnHttp200() throws Exception {
-        Collection<Role> result = integrationTestHelper.fetch(BASE_URL, emptyMap(), Role.class, OK);
+        Collection<Account> result = integrationTestHelper.fetch(BASE_URL, emptyMap(), Account.class, OK);
         Assertions.assertNotNull(result);
     }
 

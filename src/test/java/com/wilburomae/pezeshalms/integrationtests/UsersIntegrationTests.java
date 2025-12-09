@@ -5,7 +5,7 @@ import com.wilburomae.pezeshalms.users.data.entities.RoleEntity;
 import com.wilburomae.pezeshalms.users.data.repositories.RoleRepository;
 import com.wilburomae.pezeshalms.users.dtos.Contact;
 import com.wilburomae.pezeshalms.users.dtos.Identification;
-import com.wilburomae.pezeshalms.users.dtos.Role;
+import com.wilburomae.pezeshalms.users.dtos.User;
 import com.wilburomae.pezeshalms.users.dtos.UserRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
     void whenFetchExistingById_thenReturnHttp200() throws Exception {
         Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), Role.class, OK);
+        User result = integrationTestHelper.fetchById(BASE_URL, created.getKey(), emptyMap(), User.class, OK);
         Assertions.assertNotNull(result);
     }
 
@@ -61,13 +61,13 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
     void whenFetchNonExistentById_thenReturnHttp404() throws Exception {
         Map.Entry<Long, UserRequest> created = roleGenerator.createRequest();
 
-        Role result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), Role.class, NOT_FOUND);
+        User result = integrationTestHelper.fetchById(BASE_URL, created.getKey() + 1, emptyMap(), User.class, NOT_FOUND);
         Assertions.assertNull(result);
     }
 
     @Test
     void whenFetch_thenReturnHttp200() throws Exception {
-        Collection<Role> result = integrationTestHelper.fetch(BASE_URL, emptyMap(), Role.class, OK);
+        Collection<User> result = integrationTestHelper.fetch(BASE_URL, emptyMap(), User.class, OK);
         Assertions.assertNotNull(result);
     }
 
