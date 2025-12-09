@@ -22,7 +22,7 @@ public class AccountStatusesIntegrationTests extends BaseIntegrationTests {
     private final Supplier<String> nameSupplier = () -> "ACCOUNT_STATUS_" + System.nanoTime() + RANDOM.nextInt(100, 1000);
 
     @Test
-    void whenCreateNewAccountStatus_thenReturnHttp201() throws Exception {
+    void whenCreateNew_thenReturnHttp201() throws Exception {
         createAccountStatusRequest(nameSupplier.get());
     }
 

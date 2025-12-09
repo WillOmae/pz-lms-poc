@@ -35,7 +35,7 @@ public class RolesIntegrationTests extends BaseIntegrationTests {
     }
 
     @Test
-    void whenCreateNewRole_thenReturnHttp201() throws Exception {
+    void whenCreateNew_thenReturnHttp201() throws Exception {
         createRoleRequest(nameSupplier.get());
     }
 

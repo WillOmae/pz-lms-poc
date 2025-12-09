@@ -37,7 +37,7 @@ public class UsersIntegrationTests extends BaseIntegrationTests {
     }
 
     @Test
-    void whenCreateNewUser_thenReturnHttp201() throws Exception {
+    void whenCreateNew_thenReturnHttp201() throws Exception {
         createUserRequest(nameSupplier.get());
     }
 
