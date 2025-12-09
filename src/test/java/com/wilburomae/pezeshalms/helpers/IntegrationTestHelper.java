@@ -1,5 +1,6 @@
 package com.wilburomae.pezeshalms.helpers;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MvcResult;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Getter
 @Component
 public class IntegrationTestHelper {
 
@@ -23,6 +25,10 @@ public class IntegrationTestHelper {
                 .andExpect(status().is(expectedStatus.value()))
                 .andReturn();
         return httpTestHelper.mapJsonDataToClass(result, responseClass);
+    }
+
+    public <T> MvcResult createNoAssertion(String endpoint, T body) throws Exception {
+        return httpTestHelper.performPost(endpoint, body).andReturn();
     }
 
     public <U> Collection<U> fetch(String endpoint, Map<String, String> params, Class<U> responseClass, HttpStatus expectedStatus) throws Exception {
@@ -52,4 +58,5 @@ public class IntegrationTestHelper {
                 .andReturn();
         return httpTestHelper.mapJsonDataToClass(result, responseClass);
     }
+
 }

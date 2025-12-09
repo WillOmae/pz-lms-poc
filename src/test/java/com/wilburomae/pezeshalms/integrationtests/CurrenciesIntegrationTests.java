@@ -2,10 +2,14 @@ package com.wilburomae.pezeshalms.integrationtests;
 
 import com.wilburomae.pezeshalms.accounts.dtos.Currency;
 import com.wilburomae.pezeshalms.accounts.dtos.CurrencyRequest;
+import com.wilburomae.pezeshalms.helpers.HttpTestHelper;
 import com.wilburomae.pezeshalms.helpers.IntegrationTestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.security.SecureRandom;
 import java.util.Collection;
@@ -108,13 +112,26 @@ public class CurrenciesIntegrationTests extends BaseIntegrationTests {
         }
 
         public Map.Entry<Long, CurrencyRequest> createRequest() throws Exception {
+            return createRequest(0);
+        }
+
+        private Map.Entry<Long, CurrencyRequest> createRequest(int retryCount) throws Exception {
             String name = nameSupplier.get();
             String code = fixedRandom(UPPER, 3);
             String numericCode = fixedRandom(DIGITS, 3);
             CurrencyRequest request = new CurrencyRequest(code, numericCode, name, name, (short) 2, true);
-            Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
-            Assertions.assertNotNull(result);
-            return Map.entry(result, request);
+            MvcResult result = integrationTestHelper.createNoAssertion(BASE_URL, request);
+            HttpTestHelper httpTestHelper = integrationTestHelper.getHttpTestHelper();
+            Long createdId = httpTestHelper.mapJsonDataToClass(result, Long.class);
+            MockHttpServletResponse response = result.getResponse();
+            if (response.getStatus() == HttpStatus.CONFLICT.value()) {
+                if (retryCount == 3) {
+                    throw new RuntimeException("Unable to create currency");
+                }
+                return createRequest(++retryCount);
+            }
+            Assertions.assertNotNull(createdId);
+            return Map.entry(createdId, request);
         }
     }
 }
