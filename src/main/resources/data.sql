@@ -42,9 +42,12 @@ VALUES (1, 'READ_ROLES', 'can read roles', CURRENT_TIMESTAMP),
        (41, 'READ_TRANSACTION_ENTRIES', 'can read transaction entries', CURRENT_TIMESTAMP),
        (42, 'WRITE_TRANSACTION_ENTRIES', 'can create or update transaction entries', CURRENT_TIMESTAMP),
        (43, 'DELETE_TRANSACTION_ENTRIES', 'can delete transaction entries', CURRENT_TIMESTAMP),
-       (44, 'READ_REASON_TYPES', 'can read reason entries', CURRENT_TIMESTAMP),
-       (45, 'WRITE_REASON_TYPES', 'can create or update reason entries', CURRENT_TIMESTAMP),
-       (46, 'DELETE_REASON_TYPES', 'can delete reason entries', CURRENT_TIMESTAMP);;
+       (44, 'READ_REASON_TYPES', 'can read reason types', CURRENT_TIMESTAMP),
+       (45, 'WRITE_REASON_TYPES', 'can create or update reason types', CURRENT_TIMESTAMP),
+       (46, 'DELETE_REASON_TYPES', 'can delete reason types', CURRENT_TIMESTAMP),
+       (47, 'READ_LOAN_PRODUCTS', 'can read loan products', CURRENT_TIMESTAMP),
+       (48, 'WRITE_LOAN_PRODUCTS', 'can create or update loan products', CURRENT_TIMESTAMP),
+       (49, 'DELETE_LOAN_PRODUCTS', 'can delete loan products', CURRENT_TIMESTAMP);;
 
 INSERT INTO lms.roles (id, name, description, date_created)
 VALUES (1, 'SYSADMIN', 'system administrator', CURRENT_TIMESTAMP);;

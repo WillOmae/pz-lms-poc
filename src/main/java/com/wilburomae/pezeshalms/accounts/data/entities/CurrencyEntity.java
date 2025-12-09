@@ -1,7 +1,6 @@
 package com.wilburomae.pezeshalms.accounts.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
-import com.wilburomae.pezeshalms.products.data.entities.LoanProductEntity;
 import com.wilburomae.pezeshalms.transactions.data.entities.TransactionEntryEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,9 +38,6 @@ public class CurrencyEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "currency")
     private Set<AccountBalanceEntity> accountBalances = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "currency")
-    private Set<LoanProductEntity> loanProducts = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "currency")
     private Set<TransactionEntryEntity> transactionEntries = new LinkedHashSet<>();
