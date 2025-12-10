@@ -342,7 +342,7 @@ CREATE TABLE lms.loans (
     current_balance        BIGINT                   NOT NULL,
     currency               BIGINT                   NOT NULL REFERENCES lms.currencies ON UPDATE RESTRICT ON DELETE RESTRICT,
     due_date               TIMESTAMP WITH TIME ZONE NOT NULL,
-    status                 LOAN_STATUS              NOT NULL,
+    status lms.LOAN_STATUS NOT NULL,
     version                BIGINT                            DEFAULT 1 NOT NULL,
     date_created           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_updated           TIMESTAMP WITH TIME ZONE
