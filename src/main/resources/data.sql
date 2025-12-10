@@ -47,7 +47,10 @@ VALUES (1, 'READ_ROLES', 'can read roles', CURRENT_TIMESTAMP),
        (46, 'DELETE_REASON_TYPES', 'can delete reason types', CURRENT_TIMESTAMP),
        (47, 'READ_LOAN_PRODUCTS', 'can read loan products', CURRENT_TIMESTAMP),
        (48, 'WRITE_LOAN_PRODUCTS', 'can create or update loan products', CURRENT_TIMESTAMP),
-       (49, 'DELETE_LOAN_PRODUCTS', 'can delete loan products', CURRENT_TIMESTAMP);;
+       (49, 'DELETE_LOAN_PRODUCTS', 'can delete loan products', CURRENT_TIMESTAMP),
+       (50, 'READ_REPORTS', 'can read reports', CURRENT_TIMESTAMP),
+       (51, 'WRITE_REPORTS', 'can create or update reports', CURRENT_TIMESTAMP),
+       (52, 'DELETE_REPORTS', 'can delete reports', CURRENT_TIMESTAMP);;
 
 INSERT INTO lms.roles (id, name, description, date_created)
 VALUES (1, 'SYSADMIN', 'system administrator', CURRENT_TIMESTAMP);;
