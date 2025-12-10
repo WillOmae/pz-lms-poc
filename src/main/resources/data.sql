@@ -98,10 +98,45 @@ VALUES (1, 1, 1, CURRENT_TIMESTAMP),
        (40, 1, 40, CURRENT_TIMESTAMP),
        (41, 1, 41, CURRENT_TIMESTAMP),
        (42, 1, 42, CURRENT_TIMESTAMP),
-       (43, 1, 43, CURRENT_TIMESTAMP);;
+       (43, 1, 43, CURRENT_TIMESTAMP),
+       (44, 1, 44, CURRENT_TIMESTAMP),
+       (45, 1, 45, CURRENT_TIMESTAMP),
+       (46, 1, 46, CURRENT_TIMESTAMP),
+       (47, 1, 47, CURRENT_TIMESTAMP),
+       (48, 1, 48, CURRENT_TIMESTAMP),
+       (49, 1, 49, CURRENT_TIMESTAMP),
+       (50, 1, 50, CURRENT_TIMESTAMP),
+       (51, 1, 51, CURRENT_TIMESTAMP),
+       (52, 1, 52, CURRENT_TIMESTAMP);;
 
 INSERT INTO lms.credential_statuses (id, name, description, date_created)
 VALUES (1, 'ACTIVE', 'Active', CURRENT_TIMESTAMP),
        (2, 'INACTIVE', 'Inactive', CURRENT_TIMESTAMP),
        (3, 'FROZEN', 'Frozen', CURRENT_TIMESTAMP),
        (4, 'BLOCKED', 'Blocked', CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.account_statuses (id, name, description, date_created)
+VALUES (1, 'ACTIVE', 'Active', CURRENT_TIMESTAMP),
+       (2, 'PENDING_APPROVAL', 'Pending Approval', CURRENT_TIMESTAMP),
+       (3, 'SUSPENDED', 'Suspended', CURRENT_TIMESTAMP),
+       (4, 'CLOSED', 'Closed', CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.account_types (id, name, description, parent_account_type_id, date_created)
+VALUES (1, 'ASSETS', 'Root asset account', NULL, CURRENT_TIMESTAMP),
+       (2, 'LIABILITIES', 'Root liabilities account', NULL, CURRENT_TIMESTAMP),
+       (3, 'EQUITY', 'Root equity account', NULL, CURRENT_TIMESTAMP),
+       (4, 'INCOME', 'Root income account', NULL, CURRENT_TIMESTAMP),
+       (5, 'EXPENSES', 'Root expenses account', NULL, CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.entities(id, name, entity_type, date_updated)
+VALUES (1, 'SYSADMIN', 'SYSTEM', CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.entity_contacts(id, contact, entity_id, is_primary, contact_type, date_created)
+VALUES (1, 'system-admin@test-lms.xyz', 1, TRUE, 'EMAIL', CURRENT_TIMESTAMP);;
+
+-- plaintext: 123456
+INSERT INTO lms.entity_credentials(id, entity_id, hashed_password, credentials_status_id, date_created)
+VALUES (1, 1, '$2a$12$0dnWq4Koscn6WiyLdTc8OeajjbZq9LaTmGaVexsA5nA.FIBUBmvTq', 1, CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.user_roles(id, entity_id, role_id, date_created)
+VALUES (1, 1, 1, CURRENT_TIMESTAMP);;
