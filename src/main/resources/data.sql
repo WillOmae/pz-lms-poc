@@ -140,3 +140,12 @@ VALUES (1, 1, '$2a$12$0dnWq4Koscn6WiyLdTc8OeajjbZq9LaTmGaVexsA5nA.FIBUBmvTq', 1,
 
 INSERT INTO lms.user_roles(id, entity_id, role_id, date_created)
 VALUES (1, 1, 1, CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.currencies(id, code, numeric_code, symbol, name, decimal_places, active, date_created)
+VALUES (1, 'KES', '414', 'KSh', 'Kenyan Shilling', 2, TRUE, CURRENT_TIMESTAMP),
+       (2, 'USD', '840', '$', 'US Dollar', 2, TRUE, CURRENT_TIMESTAMP),
+       (3, 'UGX', '800', 'USh', 'Uganda Shilling', 0, TRUE, CURRENT_TIMESTAMP);;
+
+INSERT INTO lms.id_types(id, name, description, version, date_created)
+VALUES (1, 'National ID', 'National ID', 1, CURRENT_TIMESTAMP),
+       (2, 'Passport', 'Passport', 1, CURRENT_TIMESTAMP);;;;

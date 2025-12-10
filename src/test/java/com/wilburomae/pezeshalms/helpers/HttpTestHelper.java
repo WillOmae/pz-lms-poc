@@ -93,7 +93,7 @@ public final class HttpTestHelper {
     }
 
     private void localLogin() throws Exception {
-        MvcResult result = performLogin("tester@test.com", "123456");
+        MvcResult result = performLogin("system-admin@test-lms.xyz", "123456");
         testerApiKey = mapJsonDataToClass(result, String.class);
         Assertions.assertNotNull(testerApiKey);
         Assertions.assertFalse(testerApiKey.isEmpty());
