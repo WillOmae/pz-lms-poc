@@ -1,4 +1,4 @@
-package com.wilburomae.pezeshalms.helpers;
+package com.wilburomae.pezeshalms.common.data;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
@@ -30,7 +30,7 @@ public class DbHelper {
                 """;
         List<String> queries = em.createNativeQuery(sql).getResultList();
         for (String query : queries) {
-            em.createNativeQuery(query).getResultList();
+            em.createNativeQuery(query).getSingleResult();
         }
     }
 }
