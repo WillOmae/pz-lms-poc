@@ -3,10 +3,8 @@ package com.wilburomae.pezeshalms.helpers;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -15,15 +13,10 @@ public class DbHelper {
 
     @PersistenceContext
     private EntityManager em;
-    @Autowired
-    PlatformTransactionManager tm;
 
     @PostConstruct
-    public void cleanDatabase() {
-        resetSequences();
-    }
-
-    private void resetSequences() {
+    @Transactional
+    public void resetSequences() {
         String sql = """
                 SELECT
                     'SELECT setval(''lms.' || seq.relname || ''', (SELECT COALESCE(MAX(' || col.attname ||
@@ -35,13 +28,9 @@ public class DbHelper {
                 WHERE seq.relkind = 'S'
                   AND tbl.relnamespace = 'lms'::REGNAMESPACE;
                 """;
-        TransactionTemplate tx = new TransactionTemplate(tm);
-        tx.execute(status -> {
-            List<String> queries = em.createNativeQuery(sql).getResultList();
-            for (String query : queries) {
-                em.createNativeQuery(query).getResultList();
-            }
-            return null;
-        });
+        List<String> queries = em.createNativeQuery(sql).getResultList();
+        for (String query : queries) {
+            em.createNativeQuery(query).getResultList();
+        }
     }
 }
