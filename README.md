@@ -95,11 +95,12 @@ Work in progress to achieve accurate reporting.
 Integration tests are used to verify the correctness of the application end-to-end. Testcontainers are used to isolate
 the database from the host machine while still using same kind of database as the production environment.
 
-### Data validation
+### Data integrity
 
 To ensure data integrity, data validation is done at both the application and database layers.
 
 - application: input data is validated using JSR 380 Bean Validation
+- optimistic locking: optimistic locking is used to ensure data consistency
 - database: foreign key constraints are enforced
 
 ### Containerization
