@@ -114,6 +114,11 @@ The database is initialized with the required schema and seeded with data define
 
 Database indexes are created to improve performance. Profiling is needed to identify potential bottlenecks.
 
+## Known issues
+
+- DB ids revealed to clients
+- Reports still WIP
+
 ## Not in scope
 
 - Scoring
