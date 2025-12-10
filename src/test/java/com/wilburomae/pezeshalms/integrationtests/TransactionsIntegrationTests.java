@@ -208,7 +208,7 @@ public class TransactionsIntegrationTests extends BaseIntegrationTests {
             }
 
             String idempotencyKey = UUID.randomUUID().toString();
-            TransactionRequest request = new TransactionRequest(idempotencyKey, transactionTypeEntity.getId(), user.getId(), entries);
+            TransactionRequest request = new TransactionRequest(idempotencyKey, transactionTypeEntity.getId(), user.getId(), null, entries);
             Long result = integrationTestHelper.create(BASE_URL, request, Long.class, CREATED);
             Assertions.assertNotNull(result);
             return Map.entry(result, request);

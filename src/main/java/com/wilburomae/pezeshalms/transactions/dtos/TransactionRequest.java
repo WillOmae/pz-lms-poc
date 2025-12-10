@@ -9,5 +9,6 @@ import java.util.List;
 public record TransactionRequest(@NotBlank String idempotencyKey,
                                  long typeId,
                                  long oppositePartyId,
+                                 Long linkedTransactionId,
                                  @NotEmpty List<@NotNull TransactionEntryRequest> entries) {
 }

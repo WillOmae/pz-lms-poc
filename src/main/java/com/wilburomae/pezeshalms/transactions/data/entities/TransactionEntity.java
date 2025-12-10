@@ -1,6 +1,8 @@
 package com.wilburomae.pezeshalms.transactions.data.entities;
 
 import com.wilburomae.pezeshalms.common.data.entities.IdAuditableEntity;
+import com.wilburomae.pezeshalms.products.data.entities.LoanRepaymentScheduleEntity;
+import com.wilburomae.pezeshalms.products.data.entities.LoanTransactionEntity;
 import com.wilburomae.pezeshalms.users.data.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,4 +37,10 @@ public class TransactionEntity extends IdAuditableEntity {
 
     @OneToMany(mappedBy = "transaction")
     private Set<TransactionEntryEntity> transactionEntries = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "transaction")
+    private Set<LoanTransactionEntity> loanTransactions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "transaction")
+    private Set<LoanRepaymentScheduleEntity> repaymentSchedules = new LinkedHashSet<>();
 }
